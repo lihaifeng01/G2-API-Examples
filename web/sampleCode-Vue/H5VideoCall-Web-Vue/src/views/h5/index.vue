@@ -16,6 +16,11 @@
         </div>
       </div>
       <div class="sub-window-wrapper">
+        <div
+          class="sub-window"
+          ref="smallLocal"
+          @click="switchMain(localUid, 'video')"
+        ></div>
         <!--小画面div-->
         <template v-if="remoteStreams.length">
           <div
@@ -24,6 +29,17 @@
             class="sub-window"
             ref="small"
             :data-uid="item.getId()"
+            data-type="video"
+            @click="switchMain(item.getId(), 'video')"
+          ></div>
+          <div
+            v-for="item in remoteStreams"
+            :key="item.getId() + '_scrreen'"
+            class="sub-window"
+            ref="small"
+            :data-uid="item.getId()"
+            data-type="screen"
+            @click="switchMain(item.getId(), 'screen')"
           ></div>
         </template>
         <div v-else class="sub-window" ref="small">
@@ -87,6 +103,7 @@ export default {
     console.warn("初始化音视频sdk");
     // this.vConsole = new Vconsole();
     window.self = this;
+    NERTC.Logger.enableLogUpload();
     this.client = NERTC.createClient({
       appkey: config.appkey,
       debug: true,
@@ -172,9 +189,10 @@ export default {
       const remoteStream = evt.stream;
       //用于播放对方视频画面的div节点
       const div = [...this.$refs.small].find(
-        (item) => Number(item.dataset.uid) === Number(remoteStream.getId())
+        (item) =>
+          Number(item.dataset.uid) === Number(remoteStream.getId()) &&
+          item.dataset.type === evt.mediaType
       );
-
       if (evt.mediaType === "audio") {
         // 手势操作恢复
         Dialog.confirm({
@@ -183,17 +201,19 @@ export default {
         })
           .then(async () => {
             // 大多数浏览器限制停用的是音频
-            remoteStream
-              .play(null, {
-                audio: true,
-                video: false,
-              })
-              .then(() => {
-                console.warn("播放音频");
-              })
-              .catch((err) => {
-                console.warn("播放对方音频失败了: ", err);
-              });
+            this.remoteStreams.forEach((remoteStream) => {
+              remoteStream
+                .play(null, {
+                  audio: true,
+                  video: false,
+                })
+                .then(() => {
+                  console.warn("播放音频", remoteStream.getId());
+                })
+                .catch((err) => {
+                  console.warn("播放对方音频失败了: ", err);
+                });
+            });
           })
           .catch(() => {
             Toast("取消播放远端音频流");
@@ -202,7 +222,10 @@ export default {
       }
 
       remoteStream
-        .play(div)
+        .play(div, {
+          video: evt.mediaType === "video",
+          screen: evt.mediaType === "screen",
+        })
         .then(() => {
           console.warn("播放视频");
           remoteStream.setRemoteRenderMode({
@@ -326,6 +349,110 @@ export default {
         });
       } catch (error) {
         console.log(error);
+      }
+    },
+    async switchMain(uid, type) {
+      if (uid === this.localUid) {
+        const div = this.$refs.large;
+        const remoteUid = div.getAttribute("data-uid");
+        const type = div.getAttribute("data-type");
+        const remoteStream = this.remoteStreams.find(
+          (item) => Number(item.getId()) === Number(remoteUid)
+        );
+        if (!remoteStream) {
+          return;
+        }
+        const smallDiv = [...this.$refs.small].find(
+          (item) =>
+            Number(item.dataset.uid) === Number(remoteUid) &&
+            item.dataset.type === type
+        );
+        if (!smallDiv) {
+          return;
+        }
+        await remoteStream.play(smallDiv, {
+          video: type === "video",
+          screen: type === "screen",
+        });
+        remoteStream.setRemoteRenderMode({
+          width: smallDiv.clientWidth,
+          height: smallDiv.clientHeight,
+          cut: false,
+        });
+        //把小画面上的本地流放到大画面上
+        await this.localStream.play(div);
+        this.localStream.setLocalRenderMode({
+          width: div.clientWidth,
+          height: div.clientHeight,
+          cut: false,
+        });
+        div.setAttribute("data-uid", this.localUid);
+        div.setAttribute("data-type", "video");
+      } else {
+        const div = this.$refs.large;
+        const currentLargeUid = div.getAttribute("data-uid") || this.localUid;
+        const currentType = div.getAttribute("data-type") || "video";
+        if (currentLargeUid == this.localUid) {
+          //先把localStream的本地流放到小画面上
+          const smallLocalDiv = this.$refs.smallLocal;
+          await this.localStream.play(smallLocalDiv);
+          this.localStream.setLocalRenderMode({
+            width: smallLocalDiv.clientWidth,
+            height: smallLocalDiv.clientHeight,
+            cut: false,
+          });
+        } else {
+          //先把大画面上的远端流放到小画面上
+          const smallDiv = [...this.$refs.small].find(
+            (item) =>
+              Number(item.dataset.uid) === Number(currentLargeUid) &&
+              item.dataset.type === currentType
+          );
+          if (!smallDiv) {
+            return;
+          }
+          const remoteStream = this.remoteStreams.find(
+            (item) => Number(item.getId()) === Number(currentLargeUid)
+          );
+          if (!remoteStream) {
+            return;
+          }
+          await remoteStream.play(smallDiv, {
+            video: currentType === "video",
+            screen: currentType === "screen",
+          });
+          remoteStream.setRemoteRenderMode(
+            {
+              width: smallDiv.clientWidth,
+              height: smallDiv.clientHeight,
+              cut: false,
+            },
+            currentType
+          );
+        }
+
+        //再把小画面上的远端流放到大画面上
+        const remoteStream = this.remoteStreams.find(
+          (item) => Number(item.getId()) === Number(uid)
+        );
+        if (!remoteStream) {
+          return;
+        }
+        await remoteStream.play(div, {
+          video: type === "video",
+          screen: type === "screen",
+        });
+        remoteStream.setRemoteRenderMode(
+          {
+            width: div.clientWidth,
+            height: div.clientHeight,
+            cut: false,
+          },
+          type
+        );
+        //给div设置data-uid属性
+        div.setAttribute("data-uid", uid);
+        div.setAttribute("data-type", type);
       }
     },
     getToken() {
