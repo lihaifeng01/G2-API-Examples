@@ -1,8 +1,7 @@
 # 生成云信 RTC 鉴权的 token
 
-* 基础token：https://doc.yunxin.163.com/nertc/docs/TQ0MTI2ODQ?platform=android
-* 高级 token：https://doc.yunxin.163.com/nertc/docs/zA3MjAwNzM?platform=android
-
+* 基础 token：https://doc.yunxin.163.com/nertc/server-apis/TcxNDAxMTI?platform=server
+* 高级 token：https://doc.yunxin.163.com/nertc/server-apis/DU3Mjk0MzQ?platform=server
 
 ## 代码目录
 
@@ -24,7 +23,7 @@ String token = tokenServer.GetToken(channelName, uid, ttlSec);
 // 高级 token 具体权限说明见函数注释
 byte privilege = (byte) (1);
 long ttlSec = 1000;
-// permSecret 见云信管理后台，具体见文档说明：https://doc.yunxin.163.com/nertc/docs/zA3MjAwNzM?platform=android
+// permSecret 见云信管理后台，具体见文档说明：https://doc.yunxin.163.com/nertc/server-apis/DU3Mjk0MzQ?platform=server
 String permissionToken = tokenServer.GetPermissionKey(channelName, permSecret, uid, privilege, ttlSec);
 ```
 

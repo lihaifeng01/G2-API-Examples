@@ -40,9 +40,7 @@ class TokenServer
 
   private
 
-  # 使用指定时间生成权限密钥
   def get_permission_key_with_current_time(channel_name, perm_secret, uid, privilege, ttl_sec, cur_time)
-    # 计算校验和
     checksum = hmac_sha256(
       @app_key,
       uid.to_s,
@@ -53,7 +51,6 @@ class TokenServer
       privilege.to_s
     )
 
-    # 构建权限键映射
     perm_key_map = {
       "appkey" => @app_key,
       "checksum" => checksum,
@@ -69,7 +66,6 @@ class TokenServer
     custom_base64_encode(compressed_data)
   end
 
-  # 计算 HMAC-SHA256 签名
   def hmac_sha256(appid_str, uid_str, cur_time_str, expire_time_str, cname, perm_secret, privilege_str)
     content = [
       "appkey:#{appid_str}",
@@ -78,7 +74,7 @@ class TokenServer
       "expireTime:#{expire_time_str}",
       "cname:#{cname}",
       "privilege:#{privilege_str}",
-      ""  # 最后一行换行符
+      ""
     ].join("\n")
 
     digest = OpenSSL::HMAC.digest('sha256', perm_secret, content)
@@ -92,7 +88,7 @@ class TokenServer
 
     # 替换字符集和填充符
     standard_encoded
-      .tr('+/', '*-')   # 替换 + 为 *，/ 为 -
-      .gsub('=', '_')   # 替换 = 为 _
+      .tr('+/', '*-')   # replace + with *，replace / with -
+      .gsub('=', '_')   # replace = with _
   end
 end

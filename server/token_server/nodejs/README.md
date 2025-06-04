@@ -1,7 +1,7 @@
 # 生成云信 RTC 鉴权的 token
 
-* 基础token：https://doc.yunxin.163.com/nertc/docs/TQ0MTI2ODQ?platform=android
-* 高级 token：https://doc.yunxin.163.com/nertc/docs/zA3MjAwNzM?platform=android
+* 基础 token：https://doc.yunxin.163.com/nertc/server-apis/TcxNDAxMTI?platform=server
+* 高级 token：https://doc.yunxin.163.com/nertc/server-apis/DU3Mjk0MzQ?platform=server
 
 
 ## 代码目录
