@@ -3,8 +3,8 @@
 因为安全性考虑，RTC 鉴权 token 应该由客户端调用客户业务服务器获取。因此本目录下提供了多种服务端语言的实现方式。
 
 官方文档：
-* 基础token：https://doc.yunxin.163.com/nertc/docs/TQ0MTI2ODQ?platform=android
-* 高级 token：https://doc.yunxin.163.com/nertc/docs/zA3MjAwNzM?platform=android
+* 基础 token：https://doc.yunxin.163.com/nertc/server-apis/TcxNDAxMTI?platform=server
+* 高级 token：https://doc.yunxin.163.com/nertc/server-apis/DU3Mjk0MzQ?platform=server
 
 
 包括以下编程语言：
