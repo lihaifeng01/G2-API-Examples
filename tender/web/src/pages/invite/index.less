@@ -1,0 +1,244 @@
+.container {
+  min-height: 540px;
+  background: #eef5ff;
+  height: calc(100vh - 74px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.loading {
+  position: relative;
+  transition: opacity 0.3s;
+}
+
+.content {
+  position: relative;
+  height: 534px;
+  width: 1160px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  width: 625px;
+  height: 440px;
+  flex-shrink: 0;
+  aspect-ratio: 125/88;
+  background-image: url('@/assets/home-logo.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.panel {
+  position: relative;
+  width: 480px;
+  height: 534px;
+  flex-shrink: 0;
+  border-radius: 32px;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.title {
+  text-align: center;
+  color: #1e1f27;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
+  font-family: 'PingFang SC';
+  font-size: 26px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 40px;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  // 统一表单项间距
+  :global(.ant-form-item) {
+    margin-bottom: 16px;
+  }
+}
+
+.form-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: 400px;
+  margin-bottom: 16px; // 统一间距
+}
+
+.label {
+  color: #53576a;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
+  font-family: 'PingFang SC';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+/* 表单组件样式 */
+.input,
+.date-picker,
+.time-picker,
+.select {
+  height: 44px;
+  flex-shrink: 0;
+}
+
+.input {
+  width: 400px;
+}
+
+.date-picker {
+  width: 240px;
+}
+
+.time-picker {
+  width: 140px;
+}
+
+.select {
+  width: 324px;
+}
+
+.icon {
+  width: 50%;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.btn-primary {
+  width: 400px;
+  height: 44px;
+  flex-shrink: 0;
+  font-size: 16px;
+}
+
+.btn-default {
+  width: 400px;
+  height: 36px;
+}
+
+/* Modal 样式 */
+.modal-title {
+  position: absolute;
+  top: 12px;
+  left: 192px;
+  height: 48px;
+  color: #1e1f27;
+  text-align: center;
+  font-feature-settings:
+    'clig' off,
+    'liga' off;
+  font-family: 'PingFang SC';
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 24px;
+}
+
+.modal-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 70vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.modal-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  border-top: 1px solid #f0f1f5;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.modal-item {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 560px;
+  margin-top: 16px; // 统一间距
+}
+
+.item-key {
+  width: 131px;
+  margin-left: 40px;
+  color: #1e1f27;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
+  font-family: 'PingFang SC';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 22px;
+}
+
+.item-value {
+  width: 340px;
+  margin-right: 40px;
+  color: #53576a;
+  font-feature-settings:
+    'liga' off,
+    'clig' off;
+  font-family: 'PingFang SC';
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 22px;
+}
+
+.copy-btn {
+  width: 264px;
+  height: 36px;
+  padding: 6px 16px;
+  align-items: center;
+  margin-top: 24px;
+  gap: 4px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #337eff;
+}
+
+.empty {
+  text-align: center;
+  padding: 20px 0;
+  color: #999;
+}
