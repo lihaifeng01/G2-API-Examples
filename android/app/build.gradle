@@ -45,6 +45,7 @@ dependencies {
     implementation project(path: ':Advance:DeviceManagement')
     implementation project(path: ':Advance:VideoStream')
     implementation project(path: ':Advance:FastSwitchRooms')
+    implementation project(path: ':Advance:AICapacity')
     implementation project(path: ':VideoCapability:Beauty')
     implementation project(path: ':VideoCapability:ExternalVideoCapture')
     implementation project(path: ':VideoCapability:ScreenShare')

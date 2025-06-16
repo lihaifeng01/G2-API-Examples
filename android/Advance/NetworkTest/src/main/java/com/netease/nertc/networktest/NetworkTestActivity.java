@@ -81,6 +81,16 @@ public class NetworkTestActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onUserVideoStart(long uid, NERtcVideoStreamType streamType, int maxProfile) {
+
+        }
+
+        @Override
+        public void onUserVideoStop(long uid, NERtcVideoStreamType streamType) {
+
+        }
+
+        @Override
         public void onUserVideoStop(long uid) {
 
         }
