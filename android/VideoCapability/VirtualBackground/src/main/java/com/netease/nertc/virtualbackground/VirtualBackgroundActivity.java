@@ -128,6 +128,16 @@ public class VirtualBackgroundActivity extends AppCompatActivity implements View
         }
 
         @Override
+        public void onUserVideoStart(long uid, NERtcVideoStreamType streamType, int maxProfile) {
+
+        }
+
+        @Override
+        public void onUserVideoStop(long uid, NERtcVideoStreamType streamType) {
+
+        }
+
+        @Override
         public void onUserVideoStop(long uid) {
             Log.i(TAG, "onUserVideoStop, uid=" + uid);
             NERtcVideoView userView = mContainer.findViewWithTag(uid);

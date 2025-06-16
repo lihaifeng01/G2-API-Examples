@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.netease.lava.api.IVideoRender;
 import com.netease.lava.nertc.sdk.LastmileProbeResult;
 import com.netease.lava.nertc.sdk.NERtc;
+import com.netease.lava.nertc.sdk.NERtcAsrCaptionResult;
 import com.netease.lava.nertc.sdk.NERtcCallbackEx;
 import com.netease.lava.nertc.sdk.NERtcConstants;
 import com.netease.lava.nertc.sdk.NERtcEx;
@@ -446,6 +447,16 @@ public class ScreenShareActivity extends AppCompatActivity implements NERtcCallb
     }
 
     @Override
+    public void onUserVideoStart(long uid, NERtcVideoStreamType streamType, int maxProfile) {
+
+    }
+
+    @Override
+    public void onUserVideoStop(long uid, NERtcVideoStreamType streamType) {
+
+    }
+
+    @Override
     public void onFirstAudioDataReceived(long l) {
 
     }
@@ -611,6 +622,16 @@ public class ScreenShareActivity extends AppCompatActivity implements NERtcCallb
     }
 
     @Override
+    public void onAsrCaptionStateChanged(int asrState, int code, String message) {
+
+    }
+
+    @Override
+    public void onAsrCaptionResult(NERtcAsrCaptionResult[] result, int resultCount) {
+
+    }
+
+    @Override
     public void onLocalPublishFallbackToAudioOnly(boolean b, NERtcVideoStreamType neRtcVideoStreamType) {
 
     }
@@ -707,6 +728,11 @@ public class ScreenShareActivity extends AppCompatActivity implements NERtcCallb
 
     @Override
     public void onLabFeatureCallback(String key, Object param) {
+
+    }
+
+    @Override
+    public void onAiData(String type, String data) {
 
     }
 

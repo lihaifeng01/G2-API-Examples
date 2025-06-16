@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-
+import com.netease.nertc.aicapacity.AICapacityActivity;
 import com.netease.nertc.audiocall.AudioCallEntryActivity;
 import com.netease.nertc.audioeffect.AudioEffectActivity;
 import com.netease.nertc.audiomix.AudioMixActivity;
@@ -14,6 +14,7 @@ import com.netease.nertc.audiorecord.AudioRecordActivity;
 import com.netease.nertc.beauty.BeautyActivity;
 import com.netease.nertc.config.DemoDeploy;
 import com.netease.nertc.devicemanagement.DeviceManageActivity;
+
 import com.netease.nertc.externalaudioshare.ExternalAudioCaptureActivity;
 import com.netease.nertc.externalvideocapture.ExternalVideoCaptureActivity;
 import com.netease.nertc.externalvideorender.ExternalVideoRenderActivity;
@@ -227,6 +228,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, DeviceManageActivity.class);
+                startActivity(intent);
+            }
+        });
+        findViewById(R.id.ll_ai_capacity).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, AICapacityActivity.class);
                 startActivity(intent);
             }
         });
