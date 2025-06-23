@@ -10,6 +10,7 @@ import java.util.List;
 
 public class DemoDeploy {
     public static final String APP_KEY = "";
+    public static final String APP_SECRET = "";
     private static final int PERMISSION_REQUEST_CODE = 100;
 
     public static void requestPermissionsIfNeeded(Activity context) {
