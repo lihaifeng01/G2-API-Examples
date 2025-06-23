@@ -36,7 +36,6 @@ import com.netease.lava.nertc.sdk.video.NERtcRemoteVideoStreamType;
 import com.netease.lava.nertc.sdk.video.NERtcVideoStreamType;
 import com.netease.lava.nertc.sdk.video.NERtcVideoView;
 import com.netease.lite.BuildConfig;
-import com.netease.nertc.aicapacity.DemoTokenService;
 import com.netease.nertc.config.DemoDeploy;
 
 import org.json.JSONObject;
@@ -207,84 +206,84 @@ public class AICapacityActivity extends AppCompatActivity implements NERtcCallba
     }
     private void requestAi(final String channel, long uid) {
         try {
-            String getTokenUrl = "https://nrtc.netease.im/demo/getChecksum.action";
-            DemoTokenService demoTokenService = new DemoTokenService(getTokenUrl,DemoDeploy.APP_KEY);
-            demoTokenService.getDemoToken(String.valueOf(uid), token -> {
-                if(token != null) {
-                    String API_URL = "https://rtc-ai.yunxinapi.com/ai/task/create";
-                    try {
-                        // 生成随机数和时间戳
-                        Random random = new Random();
-                        String nonce = String.valueOf(random.nextInt(123456));
-                        long curTime = System.currentTimeMillis() / 1000;
+            TokenServer demoTokenService = new TokenServer(DemoDeploy.APP_KEY, DemoDeploy.APP_SECRET, 86400);
+            String token = demoTokenService.getToken(channel,uid, 86400);
+            if(token != null) {
+                String API_URL = "https://rtc-ai.yunxinapi.com/ai/task/create";
+                try {
+                    // 生成随机数和时间戳
+                    Random random = new Random();
+                    String nonce = String.valueOf(random.nextInt(123456));
+                    long curTime = System.currentTimeMillis() / 1000;
 
-                        URL url_api = new URL(API_URL);
-                        HttpURLConnection connection = (HttpURLConnection) url_api.openConnection();
-                        connection.setRequestMethod("POST");
+                    URL url_api = new URL(API_URL);
+                    HttpURLConnection connection = (HttpURLConnection) url_api.openConnection();
+                    connection.setRequestMethod("POST");
 
-                        // 设置请求头
-                        connection.setRequestProperty("AppKey", DemoDeploy.APP_KEY);
-                        connection.setRequestProperty("Nonce", nonce);
-                        connection.setRequestProperty("CurTime", String.valueOf(curTime));
-                        connection.setRequestProperty("CheckSum", token);
-                        connection.setRequestProperty("Content-Type", "application/json");
-                        // 构建请求体
-                        JSONObject data = new JSONObject();
-                        JSONObject asr = new JSONObject();
-                        asr.put("asrVendor", 6);
-                        data.put("asr", asr);
+                    // 设置请求头
+                    connection.setRequestProperty("AppKey", DemoDeploy.APP_KEY);
+                    connection.setRequestProperty("Nonce", nonce);
+                    connection.setRequestProperty("CurTime", String.valueOf(curTime));
+                    connection.setRequestProperty("CheckSum", token);
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    // 构建请求体
+                    JSONObject data = new JSONObject();
+                    JSONObject asr = new JSONObject();
+                    asr.put("asrVendor", 6);
+                    asr.put("maxSentenceSilence", 1000);
+                    asr.put("enableSemanticVad", false);
+                    data.put("asr", asr);
 
-                        JSONObject llm = new JSONObject();
-                        llm.put("llmVendor", 5);
-                        llm.put("role", 0);
-                        String encodedData = URLEncoder.encode("你是陪伴小助手，回答不要超过50个字", "UTF-8");
-                        llm.put("customPrompt", encodedData);
-                        data.put("llm", llm);
+                    JSONObject llm = new JSONObject();
+                    llm.put("llmVendor", 5);
+                    llm.put("role", 0);
+                    String encodedData = URLEncoder.encode("你是陪伴小助手，回答不要超过50个字", "UTF-8");
+                    llm.put("customPrompt", encodedData);
+                    data.put("llm", llm);
 
-                        JSONObject tts = new JSONObject();
-                        tts.put("ttsVendor", 6);
-                        tts.put("language", "Chinese");
-                        tts.put("gender", "Female");
-                        data.put("tts", tts);
+                    JSONObject tts = new JSONObject();
+                    tts.put("ttsVendor", 6);
+                    tts.put("language", "Chinese");
+                    tts.put("gender", "Female");
+                    data.put("tts", tts);
 
-                        JSONObject body = new JSONObject();
-                        body.put("cname", channel);
-                        body.put("requestId", generateRandomString());
-                        body.put("taskType", 7);
-                        body.put("data", data);
+                    JSONObject body = new JSONObject();
+                    body.put("cname", channel);
+                    body.put("requestId", generateRandomString());
+                    body.put("taskType", 7);
+                    body.put("data", data);
 
-                        String requestBody = body.toString();
-                        // 允许输出流
-                        connection.setDoOutput(true);
-                        DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-                        outputStream.writeBytes(requestBody);
-                        outputStream.flush();
-                        outputStream.close();
+                    String requestBody = body.toString();
+                    // 允许输出流
+                    connection.setDoOutput(true);
+                    DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+                    outputStream.writeBytes(requestBody);
+                    outputStream.flush();
+                    outputStream.close();
 
-                        // 获取响应
-                        int responseCode = connection.getResponseCode();
-                        BufferedReader reader;
-                        if (responseCode == HttpURLConnection.HTTP_OK) {
-                            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        } else {
-                            reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                        }
-                        StringBuilder response = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            response.append(line);
-                        }
-                        reader.close();
-                        JSONObject jsonObject = new JSONObject(response.toString());
-                        String result = jsonObject.getString("result");
-                        mAITaskId = new JSONObject(result).getString("taskId");
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return ;
+                    // 获取响应
+                    int responseCode = connection.getResponseCode();
+                    BufferedReader reader;
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    } else {
+                        reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
                     }
-
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                    JSONObject jsonObject = new JSONObject(response.toString());
+                    String result = jsonObject.getString("result");
+                    mAITaskId = new JSONObject(result).getString("taskId");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ;
                 }
-            });
+
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -292,61 +291,59 @@ public class AICapacityActivity extends AppCompatActivity implements NERtcCallba
 
     private void releaseAi(final String channel, long uid) {
         try {
-            String getTokenUrl = "https://nrtc.netease.im/demo/getChecksum.action";
-            DemoTokenService demoTokenService = new DemoTokenService(getTokenUrl,DemoDeploy.APP_KEY);
-            demoTokenService.getDemoToken(String.valueOf(uid), token -> {
-                if(token != null) {
-                    String API_URL = "https://rtc-ai.yunxinapi.com/ai/task/close";
-                    try {
-                        // 生成随机数和时间戳
-                        Random random = new Random();
-                        String nonce = String.valueOf(random.nextInt(123456));
-                        long curTime = System.currentTimeMillis() / 1000;
+            TokenServer demoTokenService = new TokenServer(DemoDeploy.APP_KEY, DemoDeploy.APP_SECRET, 86400);
+            String token = demoTokenService.getToken(channel,uid, 86400);
+            if(token != null) {
+                String API_URL = "https://rtc-ai.yunxinapi.com/ai/task/close";
+                try {
+                    // 生成随机数和时间戳
+                    Random random = new Random();
+                    String nonce = String.valueOf(random.nextInt(123456));
+                    long curTime = System.currentTimeMillis() / 1000;
 
-                        URL url_api = new URL(API_URL);
-                        HttpURLConnection connection = (HttpURLConnection) url_api.openConnection();
-                        connection.setRequestMethod("POST");
+                    URL url_api = new URL(API_URL);
+                    HttpURLConnection connection = (HttpURLConnection) url_api.openConnection();
+                    connection.setRequestMethod("POST");
 
-                        // 设置请求头
-                        connection.setRequestProperty("AppKey", DemoDeploy.APP_KEY);
-                        connection.setRequestProperty("Nonce", nonce);
-                        connection.setRequestProperty("CurTime", String.valueOf(curTime));
-                        connection.setRequestProperty("CheckSum", token);
+                    // 设置请求头
+                    connection.setRequestProperty("AppKey", DemoDeploy.APP_KEY);
+                    connection.setRequestProperty("Nonce", nonce);
+                    connection.setRequestProperty("CurTime", String.valueOf(curTime));
+                    connection.setRequestProperty("CheckSum", token);
 
-                        JSONObject body = new JSONObject();
-                        body.put("cid", channel);
-                        body.put("taskId", mAITaskId);
-                        body.put("taskType", 7);
+                    JSONObject body = new JSONObject();
+                    body.put("cid", channel);
+                    body.put("taskId", mAITaskId);
+                    body.put("taskType", 7);
 
-                        String requestBody = body.toString();
-                        // 允许输出流
-                        connection.setDoOutput(true);
-                        DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
-                        outputStream.writeBytes(requestBody);
-                        outputStream.flush();
-                        outputStream.close();
+                    String requestBody = body.toString();
+                    // 允许输出流
+                    connection.setDoOutput(true);
+                    DataOutputStream outputStream = new DataOutputStream(connection.getOutputStream());
+                    outputStream.writeBytes(requestBody);
+                    outputStream.flush();
+                    outputStream.close();
 
-                        // 获取响应
-                        int responseCode = connection.getResponseCode();
-                        BufferedReader reader;
-                        if (responseCode == HttpURLConnection.HTTP_OK) {
-                            reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                        } else {
-                            reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
-                        }
-                        StringBuilder response = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            response.append(line);
-                        }
-                        reader.close();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        return ;
+                    // 获取响应
+                    int responseCode = connection.getResponseCode();
+                    BufferedReader reader;
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    } else {
+                        reader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
                     }
-
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    reader.close();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return ;
                 }
-            });
+
+            }
         }catch (Exception e) {
             e.printStackTrace();
         }
