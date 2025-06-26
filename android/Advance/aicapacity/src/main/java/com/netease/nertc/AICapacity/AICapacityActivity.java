@@ -123,7 +123,7 @@ public class AICapacityActivity extends AppCompatActivity implements NERtcCallba
     private void exit(){
         if(mJoinChannel){
             closeASR();
-            releaseAi(mRoomId, mUserId);
+            new Thread(() -> releaseAi(mRoomId, mUserId)).start();
             leaveChannel();
         }
         finish();
@@ -191,7 +191,7 @@ public class AICapacityActivity extends AppCompatActivity implements NERtcCallba
             setupNERtc();
             setuplocalVideo();
             joinChannel(mRoomId, mUserId);
-            requestAi(mRoomId, mUserId);
+            new Thread(() -> requestAi(mRoomId, mUserId)).start();
             openASR();
         }
     }
